@@ -7,17 +7,15 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="container">
-    <h1>Task Dashboard</h1>
+  <h1>Task Dashboard</h1>
 
-    <button id="loadTasksBtn">Load Tasks</button>
-    <p id="statusMessage"></p>
-    <div id="taskList"></div>
-  </main>
+  <button id="loadTasksBtn">Load Tasks</button>
+  <p id="statusMessage"></p>
+  <div id="taskList"></div>
 
-  <!-- Scripts are loaded in dependency order -->
-  <script src="taskManager.js"></script>
+  <!-- Order matters: main.js uses code from api.js and taskManager.js -->
   <script src="api.js"></script>
+  <script src="taskManager.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

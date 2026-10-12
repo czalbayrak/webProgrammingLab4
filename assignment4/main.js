@@ -1,12 +1,10 @@
-// DOM references
 const loadTasksBtn = document.getElementById("loadTasksBtn");
-const taskList = document.getElementById("taskList");
 const statusMessage = document.getElementById("statusMessage");
+const taskList = document.getElementById("taskList");
 
-// Application state
-const taskManager = new TaskManager();
+const manager = new TaskManager();
 
-// Builds the DOM element for a single task
+// Builds the DOM for a single task
 function createTaskElement(task) {
   const taskDiv = document.createElement("div");
   taskDiv.classList.add("task");
@@ -20,14 +18,14 @@ function createTaskElement(task) {
   const toggleBtn = document.createElement("button");
   toggleBtn.textContent = "Toggle";
   toggleBtn.addEventListener("click", () => {
-    taskManager.toggleTask(task.id);
+    manager.toggleTask(task.id);
     renderTasks();
   });
 
   const deleteBtn = document.createElement("button");
   deleteBtn.textContent = "Delete";
   deleteBtn.addEventListener("click", () => {
-    taskManager.removeTask(task.id);
+    manager.removeTask(task.id);
     renderTasks();
   });
 
@@ -38,41 +36,37 @@ function createTaskElement(task) {
   return taskDiv;
 }
 
-// Clears the list and renders every task again
+// Clears the list and draws every task again from the manager's state
 function renderTasks() {
   while (taskList.firstChild) {
     taskList.removeChild(taskList.firstChild);
   }
 
-  taskManager.tasks.forEach((task) => {
+  manager.tasks.forEach((task) => {
     taskList.appendChild(createTaskElement(task));
   });
 }
 
-// Loads tasks from the simulated server
 async function loadTasks() {
-  statusMessage.classList.remove("error");
   statusMessage.textContent = "Loading tasks...";
   loadTasksBtn.disabled = true;
 
   try {
     const rawTasks = await fetchTasks();
 
-    // JSON requirement: stringify, then parse back
+    // JSON requirement: object -> JSON string -> object again
     const json = JSON.stringify(rawTasks);
     const parsedTasks = JSON.parse(json);
 
-    // Convert plain objects into Task instances
     const tasks = parsedTasks.map(
       (item) => new Task(item.id, item.title, item.completed)
     );
 
-    taskManager.setTasks(tasks);
+    manager.setTasks(tasks);
     renderTasks();
     statusMessage.textContent = "";
   } catch (error) {
-    statusMessage.classList.add("error");
-    statusMessage.textContent = `Failed to load tasks: ${error.message}`;
+    statusMessage.textContent = "Failed to load tasks: " + error.message;
   } finally {
     loadTasksBtn.disabled = false;
   }
